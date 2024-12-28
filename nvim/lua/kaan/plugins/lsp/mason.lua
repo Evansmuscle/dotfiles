@@ -58,6 +58,7 @@ return {
 				"taplo",
 				"vuels",
 				"yamlls",
+				"nginx_language_server",
 			},
 		})
 

@@ -25,7 +25,7 @@ config.inactive_pane_hsb = {
 }
 
 -- Terminal Background Image
-config.window_background_image = "/Users/khan/Pictures/animu-waifu.jpg"
+config.window_background_image = "/Users/khan/Pictures/animu-waifu-2.jpg"
 config.window_background_image_hsb = {
 	-- Darken the background image by reducing it to 1/3rd
 	brightness = 0.3,
@@ -37,9 +37,13 @@ config.window_background_image_hsb = {
 	-- You can adjust the saturation also.
 	saturation = 1.0,
 }
-config.window_background_opacity = 0.85
+config.window_background_opacity = 0.9
 config.macos_window_background_blur = 20
-config.text_background_opacity = 0.85
+config.text_background_opacity = 0.9
+
+-- Remove all bars
+config.enable_tab_bar = false
+config.window_decorations = "RESIZE"
 
 -- and finally, return the configuration to wezterm
 return config

@@ -74,6 +74,13 @@ return {
 					capabilities = capabilities,
 				})
 			end,
+			["nginx_language_server"] = function()
+				lspconfig["nginx_language_server"].setup({
+					capabilities = capabilities,
+					filetypes = { "nginx" },
+					pattern = { "nginx.conf" },
+				})
+			end,
 			["svelte"] = function()
 				lspconfig["svelte"].setup({
 					capabilities = capabilities,
