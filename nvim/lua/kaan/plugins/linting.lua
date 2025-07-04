@@ -23,6 +23,17 @@ return {
 			go = { "staticcheck" },
 		}
 
+		lint.linters.eslint_d.args = {
+			"--no-warn-ignored",
+			"--format",
+			"json",
+			"--stdin",
+			"--stdin-filename",
+			function()
+				return vim.api.nvim_buf_get_name(0)
+			end,
+		}
+
 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
 		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {

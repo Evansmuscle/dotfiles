@@ -17,6 +17,24 @@ return {
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 			callback = function(ev)
+				-- MAX FILESIZE EXCEED CHECK START
+				local bufnr = ev.buf
+				local filename = vim.api.nvim_buf_get_name(bufnr)
+
+				if filename ~= "" then
+					local filesize = vim.fn.getfsize(filename)
+					local max_filesize = 50 * 1024 * 1024 -- 50 MB
+
+					if filesize > max_filesize then
+						local clients = vim.lsp.get_clients({ bufnr = bufnr })
+						for _, client in ipairs(clients) do
+							client.stop()
+						end
+						return
+					end
+				end
+				-- MAX FILESIZE EXCEED CHECK END
+
 				local opts = { buffer = ev.buf, silent = true }
 
 				opts.desc = "Show LSP references"
@@ -104,6 +122,12 @@ return {
 				lspconfig["graphql"].setup({
 					capabilities = capabilities,
 					filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+				})
+			end,
+			["terraformls"] = function()
+				lspconfig["terraformls"].setup({
+					capabilities = capabilities,
+					filetypes = { "tf" },
 				})
 			end,
 			["emmet_ls"] = function()
