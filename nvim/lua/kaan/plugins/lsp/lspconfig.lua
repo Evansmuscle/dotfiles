@@ -7,12 +7,13 @@ return {
 		{ "folke/neodev.nvim", opts = {} },
 	},
 	config = function()
-		local lspconfig = require("lspconfig")
-		local mason_lspconfig = require("mason-lspconfig")
 		local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
 		-- Set Keymaps
 		local keymap = vim.keymap
+
+		-- Set log level to none
+		vim.lsp.set_log_level("off")
 
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspConfig", {}),
@@ -79,88 +80,85 @@ return {
 		})
 
 		local capabilities = cmp_nvim_lsp.default_capabilities()
-		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
 
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-		end
+		vim.diagnostic.config({
+			signs = {
+				text = {
+					[vim.diagnostic.severity.ERROR] = " ",
+					[vim.diagnostic.severity.WARN] = " ",
+					[vim.diagnostic.severity.INFO] = " ",
+					[vim.diagnostic.severity.HINT] = "󰠠 ",
+				},
+				linehl = {
+					[vim.diagnostic.severity.ERROR] = "Error",
+					[vim.diagnostic.severity.WARN] = "Warn",
+					[vim.diagnostic.severity.INFO] = "Info",
+					[vim.diagnostic.severity.HINT] = "Hint",
+				},
+			},
+		})
 
-		mason_lspconfig.setup_handlers({
-			function(server_name)
-				lspconfig[server_name].setup({
-					capabilities = capabilities,
-				})
-			end,
-			["nginx_language_server"] = function()
-				lspconfig["nginx_language_server"].setup({
-					capabilities = capabilities,
-					filetypes = { "nginx" },
-					pattern = { "nginx.conf" },
-				})
-			end,
-			["svelte"] = function()
-				lspconfig["svelte"].setup({
-					capabilities = capabilities,
-					on_attach = function(client, bufnr)
-						vim.api.nvim_create_autocmd("BufWritePost", {
-							pattern = { "*.js", "*.ts" },
-							callback = function(ctx)
-								client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-							end,
-						})
+		vim.lsp.config("nginx_language_server", {
+			capabilities = capabilities,
+			filetypes = { "nginx" },
+			pattern = { "nginx.conf" },
+		})
+		vim.lsp.config("svelte", {
+			capabilities = capabilities,
+			on_attach = function(client, bufnr)
+				vim.api.nvim_create_autocmd("BufWritePost", {
+					pattern = { "*.js", "*.ts" },
+					callback = function(ctx)
+						client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
 					end,
 				})
 			end,
-			["ts_ls"] = function()
-				lspconfig["ts_ls"].setup({
-					capabilities = capabilities,
-					filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
-				})
-			end,
-			["graphql"] = function()
-				lspconfig["graphql"].setup({
-					capabilities = capabilities,
-					filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-				})
-			end,
-			["terraformls"] = function()
-				lspconfig["terraformls"].setup({
-					capabilities = capabilities,
-					filetypes = { "tf" },
-				})
-			end,
-			["emmet_ls"] = function()
-				lspconfig["emmet_ls"].setup({
-					capabilities = capabilities,
-					filetypes = {
-						"html",
-						"css",
-						"sass",
-						"scss",
-						"less",
-						"svelte",
-						"typescriptreact",
-						"javascriptreact",
-						"php",
+		})
+		vim.lsp.config("ts_ls", {
+			capabilities = capabilities,
+			filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
+		})
+		vim.lsp.config("graphql", {
+			capabilities = capabilities,
+			filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+		})
+		vim.lsp.config("terraformls", {
+
+			capabilities = capabilities,
+			filetypes = { "tf" },
+		})
+		vim.lsp.config("emmet_ls", {
+			capabilities = capabilities,
+			filetypes = {
+				"html",
+				"css",
+				"sass",
+				"scss",
+				"less",
+				"svelte",
+				"typescriptreact",
+				"javascriptreact",
+				"php",
+			},
+		})
+		vim.lsp.config("shopify_theme_ls", {
+			capabilities = capabilities,
+			filetypes = {
+				"liquid",
+			},
+		})
+		vim.lsp.config("lua_ls", {
+			capabilities = capabilities,
+			settings = {
+				Lua = {
+					diagnostics = {
+						globals = { "vim" },
 					},
-				})
-			end,
-			["lua_ls"] = function()
-				lspconfig["lua_ls"].setup({
-					capabilities = capabilities,
-					settings = {
-						Lua = {
-							diagnostics = {
-								globals = { "vim" },
-							},
-							completion = {
-								callSnippet = "Replace",
-							},
-						},
+					completion = {
+						callSnippet = "Replace",
 					},
-				})
-			end,
+				},
+			},
 		})
 	end,
 }

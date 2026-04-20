@@ -21,6 +21,7 @@ return {
 			php = { "tlint" },
 			blade = { "tlint" },
 			go = { "staticcheck" },
+			liquid = { "curlylint" },
 		}
 
 		lint.linters.eslint_d.args = {
