@@ -1,5 +1,7 @@
 local opt = vim.opt
 
+vim.env.PATH = vim.fn.expand("~/.pyenv/shims") .. ":/usr/lib/jvm/default/bin:" .. vim.env.PATH
+
 opt.relativenumber = true
 opt.number = true
 
